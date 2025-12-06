@@ -7,6 +7,7 @@ import adapterManager from './manager';
 import { GitHub1sAdapter } from './github1s';
 import { GitLab1sAdapter } from './gitlab1s';
 import { BitbucketAdapter } from './bitbucket1s';
+import { GitCode1sAdapter } from './gitcode1s';
 import { Npmjs1sAdapter } from './npmjs1s';
 import { OSSInsightAdapter } from './ossinsight';
 import { DataSource, PlatformName, RouterParser } from './types';
@@ -24,6 +25,7 @@ export const registerAdapters = async (): Promise<void> => {
 		adapterManager.registerAdapter(new GitHub1sAdapter()),
 		adapterManager.registerAdapter(new GitLab1sAdapter()),
 		adapterManager.registerAdapter(new BitbucketAdapter()),
+		adapterManager.registerAdapter(new GitCode1sAdapter()),
 		adapterManager.registerAdapter(new Npmjs1sAdapter()),
 		adapterManager.registerAdapter(new OSSInsightAdapter()),
 	]);

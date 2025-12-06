@@ -4,6 +4,7 @@
  */
 
 import githubLogoUrl from './assets/github.svg';
+import gitcodeLogoUrl from './assets/gitcode.svg';
 import gitlabLogoUrl from './assets/gitlab.svg';
 import bitbucketLogoUrl from './assets/bitbucket.svg';
 import npmLogoUrl from './assets/npm.svg';
@@ -56,6 +57,7 @@ export enum Platform {
 	GitHub = 'GitHub',
 	GitLab = 'GitLab',
 	Bitbucket = 'Bitbucket',
+	GitCode = 'GitCode',
 	npm = 'npm',
 }
 
@@ -85,6 +87,20 @@ export const createVSCodeWebConfig = (platform: Platform, repository: string): a
 				title: 'Open on Bitbucket',
 				icon: bitbucketLogoUrl,
 				onClick: () => (repository ? openOfficialPage('https://bitbucket.org') : openGitHub1sPage()),
+			},
+		};
+	}
+
+	if (platform === Platform.GitCode) {
+		return {
+			hideTextFileLabelDecorations: !!repository,
+			workspace: repository ? createFolderWorkspace('gitcode1s') : undefined,
+			workspaceId: repository ? 'gitcode1s:' + repository : '',
+			workspaceLabel: repository,
+			logo: {
+				title: 'Open on GitCode',
+				icon: gitcodeLogoUrl,
+				onClick: () => (repository ? openOfficialPage('https://gitcode.com') : openGitHub1sPage()),
 			},
 		};
 	}

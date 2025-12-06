@@ -12,6 +12,12 @@ import { createVSCodeWebConfig, createWorkbenchOptions, Platform } from './confi
 const resolvePlatformState = (): [Platform, string] => {
 	const hostname = window.location.hostname;
 	const pathParts = window.location.pathname.split('/').filter(Boolean);
+	const query = new URLSearchParams(window.location.search);
+
+	if (query.get('platform') === 'gitcode') {
+		const repository = pathParts.length >= 2 ? pathParts.slice(0, 2).join('/') : '';
+		return [Platform.GitCode, repository];
+	}
 
 	if (hostname.match(/^(.*\.)?gitlab1s\.com$/i)) {
 		const dashIndex = pathParts.indexOf('-');
@@ -21,6 +27,10 @@ const resolvePlatformState = (): [Platform, string] => {
 	if (hostname.match(/^(.*\.)?bitbucket1s\.org$/i)) {
 		const repository = pathParts.length >= 2 ? pathParts.slice(0, 2).join('/') : '';
 		return [Platform.Bitbucket, repository];
+	}
+	if (hostname.match(/^(.*\.)?gitcode1s\.com$/i)) {
+		const repository = pathParts.length >= 2 ? pathParts.slice(0, 2).join('/') : '';
+		return [Platform.GitCode, repository];
 	}
 	if (hostname.match(/^(.*\.)?npmjs1s\.com$/i)) {
 		const trimmedParts = pathParts[0] === 'package' ? pathParts.slice(1) : pathParts;

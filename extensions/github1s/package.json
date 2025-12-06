@@ -17,6 +17,7 @@
     "onFileSystem:github1s",
     "onFileSystem:gitlab1s",
     "onFileSystem:bitbucket1s",
+    "onFileSystem:gitcode1s",
     "onFileSystem:npmjs1s",
     "onFileSystem:ossinsight",
     "onCommand:remoteHub.openRepository"
@@ -286,6 +287,13 @@
         "enablement": "github1s:adapters:default:platformName == 'Bitbucket'"
       },
       {
+        "command": "github1s.commands.openOnGitCode",
+        "title": "Open on GitCode",
+        "category": "GitHub1s",
+        "icon": "$(globe)",
+        "enablement": "github1s:adapters:default:platformName == 'GitCode'"
+      },
+      {
         "command": "github1s.commands.openOnNpm",
         "title": "Open on npm",
         "category": "GitHub1s",
@@ -297,7 +305,7 @@
         "title": "Open on Official Page",
         "category": "GitHub1s",
         "icon": "$(globe)",
-        "enablement": "github1s:adapters:default:platformName != 'GitHub' && github1s:adapters:default:platformName != 'GitLab' && github1s:adapters:default:platformName != 'Bitbucket' && github1s:adapters:default:platformName != 'npm'"
+        "enablement": "github1s:adapters:default:platformName != 'GitHub' && github1s:adapters:default:platformName != 'GitLab' && github1s:adapters:default:platformName != 'Bitbucket' && github1s:adapters:default:platformName != 'GitCode' && github1s:adapters:default:platformName != 'npm'"
       }
     ],
     "colors": [
