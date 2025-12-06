@@ -19,6 +19,11 @@ const resolvePlatformState = (): [Platform, string] => {
 		return [Platform.GitCode, repository];
 	}
 
+	if (pathParts[0] === 'gitcode') {
+		const repository = pathParts.length >= 3 ? pathParts.slice(1, 3).join('/') : '';
+		return [Platform.GitCode, repository];
+	}
+
 	if (hostname.match(/^(.*\.)?gitlab1s\.com$/i)) {
 		const dashIndex = pathParts.indexOf('-');
 		const repository = (dashIndex < 0 ? pathParts : pathParts.slice(0, dashIndex)).join('/');
