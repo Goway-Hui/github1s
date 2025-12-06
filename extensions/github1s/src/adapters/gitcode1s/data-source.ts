@@ -425,6 +425,6 @@ export class GitCode1sDataSource extends DataSource {
 		return Promise.resolve(null);
 	}
 	provideUserAvatarLink(user: string): string {
-		return `https://gitcode.net/${user}.png`; // Assuming standard avatar URL pattern or use API
+		return `https://gitcode.com/${user}.png`; // Best effort guess
 	}
 }
