@@ -54,57 +54,48 @@ export class GitCode1sDataSource extends DataSource {
 		const fetcher = GitCodeFetcher.getInstance();
 		const { owner, repo } = this.parseRepoFullName(repoFullName);
 
-		const params: any = {
-			owner,
-			repo,
-			sha: ref,
-			recursive: recursive ? 1 : 0,
-			per_page: 100,
-		};
-
-		if (path) {
-			// If path is provided, we might need to traverse the tree or find the sha for the path first if API doesn't support filtering tree by path directly on root.
-			// But GitHub API supports recursive tree, so maybe GitCode does too.
-			// However, if we want a subtree, we usually get the tree sha for that path.
-			// For now, let's assume we get the full tree or the tree for the ref.
-			// If GitCode supports file_path in tree api, use it.
-			// Otherwise we might need to implement manual traversal or just rely on recursive=1 and filter client side (inefficient).
-			// Let's assume recursive=1 and filter if path is not empty?
-			// Or maybe GitCode has a way to get tree for a path.
-			// Let's try to use the tree API with the sha of the directory if we can find it.
-			// But we don't have it easily.
-			// Let's stick to what we wrote before:
-			// params.file_path = path;
-			// (Checking previous file content, I added file_path to params. I will keep it.)
-			params.file_path = path;
-		}
+		// Use contents API which corresponds to GitHub's get-repository-content
+		// This is more reliable than git/trees for browsing (non-recursive)
+		// and avoids the 100-file limit of recursive tree fetching on GitCode.
+		const apiPath = path ? `/repos/${owner}/${repo}/contents/${path}` : `/repos/${owner}/${repo}/contents`;
+		const params = { ref };
 
 		try {
-			const response = await fetcher.request('/repos/:owner/:repo/git/trees/:sha', params);
-			const tree = response.data.tree;
+			const response = await fetcher.request(apiPath, params);
+			const data = response.data;
 
-			if (!tree) {
-				console.warn('GitCode1sDataSource: No tree found in response', response.data);
+			if (!Array.isArray(data)) {
+				// It's a file, not a directory
 				return null;
 			}
 
-			const entries: DirectoryEntry[] = tree.map((item: any) => {
-				let itemPath = item.path;
-				if (path && itemPath.startsWith(path + '/')) {
-					itemPath = itemPath.slice(path.length + 1);
+			const entries: DirectoryEntry[] = data.map((item: any) => {
+				if (item.type === 'dir') {
+					return {
+						type: FileType.Directory,
+						path: item.path,
+					};
 				}
+				if (item.type === 'submodule') {
+					return {
+						type: FileType.Submodule,
+						path: item.path,
+						commitSha: item.sha,
+					};
+				}
+				// Default to file (including symlink for now)
 				return {
-					type: item.type === 'tree' ? FileType.Directory : FileType.File,
-					path: itemPath,
+					type: FileType.File,
+					path: item.path,
 					size: item.size,
 				};
 			});
 
 			return {
 				entries,
-				truncated: response.data.truncated || false,
+				truncated: false,
 			};
-		} catch (e) {
+		} catch (e: any) {
 			console.error('GitCode1sDataSource: provideDirectory error', e);
 			return null;
 		}
@@ -275,8 +266,8 @@ export class GitCode1sDataSource extends DataSource {
 			return { ref: await this.getDefaultBranch(repoFullName), path: '' };
 		}
 
-		const branches = await this.provideBranches(repoFullName);
-		const tags = await this.provideTags(repoFullName);
+		const branches = await this.provideBranches(repoFullName, { pageSize: 100 });
+		const tags = await this.provideTags(repoFullName, { pageSize: 100 });
 		const refs = [...branches.map((b) => b.name), ...tags.map((t) => t.name)];
 
 		const pathParts = path.split('/');
