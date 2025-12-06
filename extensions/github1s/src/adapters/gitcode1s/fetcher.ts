@@ -51,7 +51,7 @@ export class GitCodeFetcher {
 				method,
 				headers: {
 					Accept: params.format === 'text' ? 'text/plain' : 'application/json',
-					...(accessToken ? { Authorization: `token ${accessToken}` } : {}),
+					...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
 				},
 			}).then(async (response: Response & { data: any }) => {
 				if (params.format === 'text') {

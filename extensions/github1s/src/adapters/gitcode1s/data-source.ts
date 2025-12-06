@@ -59,6 +59,7 @@ export class GitCode1sDataSource extends DataSource {
 			repo,
 			sha: ref,
 			recursive: recursive ? 1 : 0,
+			per_page: 100,
 		};
 
 		if (path) {
@@ -88,9 +89,13 @@ export class GitCode1sDataSource extends DataSource {
 			}
 
 			const entries: DirectoryEntry[] = tree.map((item: any) => {
+				let itemPath = item.path;
+				if (path && itemPath.startsWith(path + '/')) {
+					itemPath = itemPath.slice(path.length + 1);
+				}
 				return {
 					type: item.type === 'tree' ? FileType.Directory : FileType.File,
-					path: item.path,
+					path: itemPath,
 					size: item.size,
 				};
 			});
@@ -105,25 +110,12 @@ export class GitCode1sDataSource extends DataSource {
 		}
 	}
 
-	async provideFile(repoFullName: string, ref: string, path: string): Promise<File | null> {
+	async provideFile(repoFullName: string, ref: string, path: string): Promise<File> {
 		const fetcher = GitCodeFetcher.getInstance();
 		const { owner, repo } = this.parseRepoFullName(repoFullName);
-
-		try {
-			const response = await fetcher.request('/repos/:owner/:repo/raw/:path', {
-				owner,
-				repo,
-				path,
-				ref,
-				format: 'text',
-			});
-
-			return {
-				content: toUint8Array(response.data),
-			};
-		} catch (e) {
-			return null;
-		}
+		const params = { owner, repo, path, ref };
+		const response = await fetcher.request('/repos/:owner/:repo/contents/:path', params);
+		return { content: toUint8Array(response.data.content) };
 	}
 
 	async provideBranches(repoFullName: string, options?: CommonQueryOptions): Promise<Branch[]> {
@@ -238,7 +230,7 @@ export class GitCode1sDataSource extends DataSource {
 		}
 	}
 
-	async provideCommit(repoFullName: string, ref: string): Promise<Commit | null> {
+	async provideCommit(repoFullName: string, ref: string): Promise<(Commit & { files?: ChangedFile[] }) | null> {
 		const fetcher = GitCodeFetcher.getInstance();
 		const { owner, repo } = this.parseRepoFullName(repoFullName);
 		try {
@@ -257,10 +249,24 @@ export class GitCode1sDataSource extends DataSource {
 				createTime: new Date(item.commit?.author?.date),
 				parents: item.parents?.map((p: any) => p.sha) || [],
 				avatarUrl: item.author?.avatar_url,
+				files: item.files?.map((file: any) => ({
+					path: file.filename,
+					status: file.status,
+					previousPath: file.previous_filename,
+				})),
 			};
 		} catch (e) {
 			return null;
 		}
+	}
+
+	async provideCommitChangedFiles(
+		repoFullName: string,
+		ref: string,
+		options?: CommonQueryOptions,
+	): Promise<ChangedFile[]> {
+		const commit = await this.provideCommit(repoFullName, ref);
+		return commit?.files || [];
 	}
 
 	// Helper to extract ref and path from a full path string
@@ -287,7 +293,6 @@ export class GitCode1sDataSource extends DataSource {
 		return { ref: await this.getDefaultBranch(repoFullName), path };
 	}
 
-	// Stubs for other methods
 	provideTextSearchResults(
 		repo: string,
 		ref: string,
@@ -296,18 +301,105 @@ export class GitCode1sDataSource extends DataSource {
 	): Promise<TextSearchResults> {
 		return Promise.resolve({ results: [], truncated: false });
 	}
-	provideCodeReviews(
-		repo: string,
+
+	async provideCodeReviews(
+		repoFullName: string,
 		options?: CodeReviewsQueryOptions,
 	): Promise<(CodeReview & { files?: ChangedFile[] })[]> {
-		return Promise.resolve([]);
+		const fetcher = GitCodeFetcher.getInstance();
+		const { owner, repo } = this.parseRepoFullName(repoFullName);
+		try {
+			const response = await fetcher.request('/repos/:owner/:repo/pulls', {
+				owner,
+				repo,
+				state: options?.state ? options.state.toLowerCase() : 'open',
+				page: options?.page,
+				per_page: options?.pageSize,
+			});
+			return response.data.map((item: any) => ({
+				id: item.number.toString(),
+				title: item.title,
+				state:
+					item.state === 'open'
+						? CodeReviewState.Open
+						: item.merged_at
+							? CodeReviewState.Merged
+							: CodeReviewState.Closed,
+				creator: item.user?.login,
+				createTime: new Date(item.created_at),
+				mergeTime: item.merged_at ? new Date(item.merged_at) : null,
+				closeTime: item.closed_at ? new Date(item.closed_at) : null,
+				source: item.head.ref,
+				target: item.base.ref,
+				sourceSha: item.head.sha,
+				targetSha: item.base.sha,
+				avatarUrl: item.user?.avatar_url,
+			}));
+		} catch (e) {
+			return [];
+		}
 	}
-	provideCodeReview(
-		repo: string,
+
+	async provideCodeReview(
+		repoFullName: string,
 		id: string,
 	): Promise<(CodeReview & { sourceSha: string; targetSha: string; files?: ChangedFile[] }) | null> {
-		return Promise.resolve(null);
+		const fetcher = GitCodeFetcher.getInstance();
+		const { owner, repo } = this.parseRepoFullName(repoFullName);
+		try {
+			const response = await fetcher.request('/repos/:owner/:repo/pulls/:number', {
+				owner,
+				repo,
+				number: id,
+			});
+			const item = response.data;
+			return {
+				id: item.number.toString(),
+				title: item.title,
+				state:
+					item.state === 'open'
+						? CodeReviewState.Open
+						: item.merged_at
+							? CodeReviewState.Merged
+							: CodeReviewState.Closed,
+				creator: item.user?.login,
+				createTime: new Date(item.created_at),
+				mergeTime: item.merged_at ? new Date(item.merged_at) : null,
+				closeTime: item.closed_at ? new Date(item.closed_at) : null,
+				source: item.head.ref,
+				target: item.base.ref,
+				sourceSha: item.head.sha,
+				targetSha: item.base.sha,
+				avatarUrl: item.user?.avatar_url,
+			};
+		} catch (e) {
+			return null;
+		}
 	}
+
+	async provideCodeReviewChangedFiles(
+		repoFullName: string,
+		id: string,
+		options?: CommonQueryOptions,
+	): Promise<ChangedFile[]> {
+		const fetcher = GitCodeFetcher.getInstance();
+		const { owner, repo } = this.parseRepoFullName(repoFullName);
+		try {
+			const response = await fetcher.request('/repos/:owner/:repo/pulls/:number/files', {
+				owner,
+				repo,
+				number: id,
+			});
+			return response.data.map((file: any) => ({
+				path: file.filename,
+				status: file.status,
+				previousPath: file.previous_filename,
+			}));
+		} catch (e) {
+			return [];
+		}
+	}
+
 	provideFileBlameRanges(repo: string, ref: string, path: string): Promise<BlameRange[]> {
 		return Promise.resolve([]);
 	}
@@ -342,6 +434,6 @@ export class GitCode1sDataSource extends DataSource {
 		return Promise.resolve(null);
 	}
 	provideUserAvatarLink(user: string): string {
-		return '';
+		return `https://gitcode.net/${user}.png`; // Assuming standard avatar URL pattern or use API
 	}
 }

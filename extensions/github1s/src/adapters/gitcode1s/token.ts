@@ -52,7 +52,7 @@ export class GitCodeTokenManager {
 		if (!accessToken) {
 			return Promise.resolve(null);
 		}
-		const fetchOptions = accessToken ? { headers: { Authorization: `token ${accessToken}` } } : {};
+		const fetchOptions = accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {};
 		return fetch(`${GITCODE_API_PREFIX}/user`, fetchOptions)
 			.then((response) => {
 				if (response.status === 401) {
