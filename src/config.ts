@@ -14,7 +14,7 @@ const createFolderWorkspace = (scheme: string) => ({
 });
 
 const openGitHub1sPage = () => {
-	return window.open('https://github.com/conwnet/github1s', '_blank');
+	return window.open('https://github.com/Goway-Hui/github1s', '_blank');
 };
 
 const openOfficialPage = (origin: string) => {
