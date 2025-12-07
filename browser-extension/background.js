@@ -17,12 +17,12 @@ chrome.action.onClicked.addListener((tab) => {
 		// 	chrome.tabs.create({ url: newUrl });
 		// }
 
-		// 本地运行
+		// Cloudflare Pages Deployment
+		// TODO: Replace 'your-project-name' with your actual Cloudflare Pages project name
+		const GITHUB1S_DOMAIN = 'https://github1s-2zj.pages.dev';
+
 		if (url.hostname.includes('gitcode.com') || url.hostname.includes('gitcode.net')) {
-			// Replace the domain with gitcode1s.com
-			// Example: https://gitcode.com/user/repo -> https://gitcode1s.com/user/repo
-			// const newUrl = `https://gitcode1s.com${url.pathname}${url.search}${url.hash}`;
-			const newUrl = `http://127.0.0.1:4000${url.pathname}${url.search}${url.hash}`;
+			const newUrl = `${GITHUB1S_DOMAIN}/gitcode${url.pathname}${url.search}${url.hash}`;
 			chrome.tabs.create({ url: newUrl });
 		}
 	} catch (e) {

@@ -6,6 +6,11 @@ declare module '*.svg' {
 	export default content;
 }
 
+declare module '*.svg?url' {
+	const content: string;
+	export default content;
+}
+
 declare const DEV_VSCODE: boolean;
 declare const GITHUB_ORIGIN: string;
 declare const GITLAB_ORIGIN: string;

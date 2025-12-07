@@ -132,6 +132,7 @@ export default defineConfig(({ mode }) => {
 			viteStaticCopy({
 				targets: [
 					{ src: 'extensions', dest: `${staticDir}` },
+					{ src: 'resources', dest: `${staticDir}` },
 					{ src: normalizePath(path.join(vscodeWebPath, 'vscode')), dest: `${staticDir}` },
 					{ src: normalizePath(path.join(vscodeWebPath, 'extensions')), dest: `${staticDir}` },
 					{ src: normalizePath(path.join(vscodeWebPath, 'dependencies')), dest: `${staticDir}` },

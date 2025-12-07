@@ -3,11 +3,11 @@
  * @author netcon
  */
 
-import githubLogoUrl from './assets/github.svg';
-import gitcodeLogoUrl from './assets/gitcode.svg';
-import gitlabLogoUrl from './assets/gitlab.svg';
-import bitbucketLogoUrl from './assets/bitbucket.svg';
-import npmLogoUrl from './assets/npm.svg';
+import githubLogoUrl from './assets/github.svg?url';
+import gitcodeLogoUrl from './assets/gitcode.svg?url';
+import gitlabLogoUrl from './assets/gitlab.svg?url';
+import bitbucketLogoUrl from './assets/bitbucket.svg?url';
+import npmLogoUrl from './assets/npm.svg?url';
 
 const createFolderWorkspace = (scheme: string) => ({
 	folderUri: { scheme, authority: '', path: '/', query: '', fragment: '' },

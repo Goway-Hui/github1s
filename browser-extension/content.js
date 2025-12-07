@@ -48,13 +48,16 @@
 			// 	// GitHub: https://1.94.250.84:8443/user/repo
 			// 	newUrl = `https://1.94.250.84:8443${path}${search}${hash}`;
 			// }
-			// 本地运行
+			// Cloudflare Pages Deployment
+			// TODO: Replace 'your-project-name' with your actual Cloudflare Pages project name
+			const GITHUB1S_DOMAIN = 'https://github1s-2zj.pages.dev';
+
 			if (window.location.hostname.includes('gitcode')) {
-				// GitCode: https://1.94.250.84:8443/gitcode/user/repo
-				newUrl = `http://127.0.0.1:4000${path}${search}${hash}`;
+				// GitCode
+				newUrl = `${GITHUB1S_DOMAIN}/gitcode${path}${search}${hash}`;
 			} else if (window.location.hostname.includes('github')) {
-				// GitHub: https://1.94.250.84:4000/user/repo
-				newUrl = `http://127.0.0.1:4000${path}${search}${hash}`;
+				// GitHub
+				newUrl = `${GITHUB1S_DOMAIN}${path}${search}${hash}`;
 			}
 
 			if (newUrl) {
