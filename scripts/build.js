@@ -8,11 +8,18 @@ import { executeCommand, PROJECT_ROOT } from './utils.js';
 const main = () => {
 	for (const extension of fs.readdirSync('extensions')) {
 		const extensionPath = path.join(PROJECT_ROOT, 'extensions', extension);
-		if (fs.existsSync(path.join(extensionPath, 'package.json'))) {
-			executeCommand('npm', ['run', 'compile'], extensionPath);
+		const packageJsonPath = path.join(extensionPath, 'package.json');
+
+		if (fs.existsSync(packageJsonPath)) {
+			const pkg = fs.readJsonSync(packageJsonPath);
+			if (pkg.scripts && pkg.scripts['build:vite']) {
+				executeCommand('npm', ['run', 'build:vite'], extensionPath);
+			} else if (pkg.scripts && pkg.scripts['compile']) {
+				executeCommand('npm', ['run', 'compile'], extensionPath);
+			}
 		}
 	}
-	executeCommand('npx', ['webpack', '--mode=production'], PROJECT_ROOT);
+	executeCommand('npm', ['run', 'build:vite'], PROJECT_ROOT);
 };
 
 main();

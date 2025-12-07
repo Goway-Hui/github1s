@@ -8,7 +8,14 @@ import CopyPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as packUtils from './scripts/webpack.js';
 
-const commitId = cp.execSync('git rev-parse HEAD').toString().trim();
+const commitId = (function () {
+	try {
+		// Add timeout to prevent hanging if git is missing or slow
+		return cp.execSync('git rev-parse HEAD', { timeout: 2000 }).toString().trim();
+	} catch (e) {
+		return Date.now().toString(16);
+	}
+})();
 const staticDir = `static-${commitId.padStart(7, '0').slice(0, 7)}`;
 const vscodeWebPath = path.join(import.meta.dirname, 'node_modules/@github1s/vscode-web');
 
@@ -91,7 +98,7 @@ export default (env, argv) => {
 		],
 		performance: false,
 		devServer: {
-			port: 8080,
+			port: 4000,
 			liveReload: false,
 			allowedHosts: 'all',
 			client: { overlay: false },

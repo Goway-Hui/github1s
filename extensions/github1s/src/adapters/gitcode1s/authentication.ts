@@ -101,19 +101,28 @@ export class GitCode1sAuthenticationView {
 			this.webviewPanel.onDidDispose(() => (this.webviewPanel = null));
 		}
 
+		const webview = this.webviewPanel.webview;
 		// Reuse GitHub1s authentication styles and scripts for now, maybe we need to customize
 		const styles = [
-			vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/pages/components.css').toString(),
-			vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/pages/github1s-authentication.css').toString(),
+			webview
+				.asWebviewUri(vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/pages/components.css'))
+				.toString(),
+			webview
+				.asWebviewUri(vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/pages/github1s-authentication.css'))
+				.toString(),
 		];
-		const globalPageConfig = { ...this.pageConfig, extensionUri: extensionContext.extensionUri.toString() };
+		const globalPageConfig = {
+			...this.pageConfig,
+			extensionUri: webview.asWebviewUri(extensionContext.extensionUri).toString(),
+		};
 		const scripts = [
 			'data:text/javascript;base64,' +
 				Buffer.from(`window.pageConfig=${JSON.stringify(globalPageConfig)};`).toString('base64'),
-			vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/pages/github1s-authentication.js').toString(),
+			webview
+				.asWebviewUri(vscode.Uri.joinPath(extensionContext.extensionUri, 'assets/pages/github1s-authentication.js'))
+				.toString(),
 		];
 
-		const webview = this.webviewPanel.webview;
 		webview.html = createPageHtml(this.pageTitle, styles, scripts);
 		return withBarrier ? this.tokenBarrier!.wait() : Promise.resolve();
 	}

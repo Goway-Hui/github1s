@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "GitCode1s",
+  "version": "1.0.0",
+  "description": "One second to read GitCode code with VS Code.",
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "action": {
+    "default_title": "Open in GitCode1s"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://gitcode.com/*", "https://gitcode.net/*", "https://github.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["activeTab"]
+}

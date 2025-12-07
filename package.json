@@ -13,9 +13,11 @@
     "link": "node scripts/link.js",
     "format": "prettier --write .",
     "eslint": "eslint --fix",
-    "test:ci": "start-test watch:dev-server 8080 test",
+    "test:ci": "start-test watch:dev-server 4000 test",
     "test": "cd tests && npm install && npx playwright install && npm run test",
-    "postinstall": "husky install && node scripts/postinstall.js"
+    "postinstall": "husky install && node scripts/postinstall.js",
+    "build:vite": "vite build",
+    "dev:vite": "vite"
   },
   "lint-staged": {
     "*.{js,ts}": [
@@ -29,6 +31,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250109.0",
     "@github1s/vscode-web": "^0.26.0",
@@ -56,6 +61,9 @@
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.19.1",
     "uglify-js": "^3.19.3",
+    "vite": "^7.2.6",
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-static-copy": "^3.1.4",
     "webpack": "^5.97.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"

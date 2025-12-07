@@ -1,21 +1,21 @@
 .vscode-input {
-  margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 .vscode-button {
-  margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 #app {
-  padding: 10px;
+	padding: 10px;
 }
 
 .flex-line {
-  display: flex;
+	display: flex;
 }
 
 .flex-line > * {
-  flex: 1;
+	flex: 1;
 }
 
 .page-title {
@@ -25,7 +25,7 @@
 }
 
 .page-description {
-  font-size: 12px;
+	font-size: 12px;
 	margin-bottom: 12px;
 }
 
@@ -34,11 +34,11 @@
 }
 
 .content-block {
-  margin-bottom: 8px;
+	margin-bottom: 8px;
 }
 
 .content-block-title {
-  font-weight: normal;
+	font-weight: normal;
 	margin-bottom: 8px;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .input-token-block-title {
-  font-weight: normal;
+	font-weight: normal;
 	margin-bottom: 8px;
 }
 
@@ -56,27 +56,26 @@
 }
 
 .page-footer {
-  display: flex;
-  align-items: center;
-  margin-top: 12px;
+	display: flex;
+	align-items: center;
+	margin-top: 12px;
 }
 
 .page-footer input {
- margin-right: 4px;
- margin-left: 0;
+	margin-right: 4px;
+	margin-left: 0;
 }
 
 .login-text > span:first-child {
-  margin-right: 4px;
+	margin-right: 4px;
 }
 
 .user-avatar {
-  display: inline-block;
-  height: 14px;
-  width: 14px;
-  margin-right: 4px;
-  vertical-align: bottom;
-  border-radius: 50%;
-  background-color: #ccc;
+	display: inline-block;
+	height: 14px;
+	width: 14px;
+	margin-right: 4px;
+	vertical-align: bottom;
+	border-radius: 50%;
+	background-color: #ccc;
 }
-

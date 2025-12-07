@@ -49,7 +49,7 @@ export class GitCode1sDataSource extends DataSource {
 		repoFullName: string,
 		ref: string,
 		path: string,
-		recursive = false,
+		_recursive = false,
 	): Promise<Directory | null> {
 		const fetcher = GitCodeFetcher.getInstance();
 		const { owner, repo } = this.parseRepoFullName(repoFullName);
@@ -169,7 +169,7 @@ export class GitCode1sDataSource extends DataSource {
 		}
 	}
 
-	async provideTag(repoFullName: string, tagName: string): Promise<Tag | null> {
+	async provideTag(_repoFullName: string, _tagName: string): Promise<Tag | null> {
 		// GitCode might not have a direct single tag endpoint, but we can try or filter.
 		// Assuming /repos/:owner/:repo/tags/:tag exists or we fetch all and find.
 		// For efficiency, let's assume we can't get single tag easily without list,
@@ -285,10 +285,10 @@ export class GitCode1sDataSource extends DataSource {
 	}
 
 	provideTextSearchResults(
-		repo: string,
-		ref: string,
-		query: TextSearchQuery,
-		options?: TextSearchOptions,
+		_repo: string,
+		_ref: string,
+		_query: TextSearchQuery,
+		_options?: TextSearchOptions,
 	): Promise<TextSearchResults> {
 		return Promise.resolve({ results: [], truncated: false });
 	}
@@ -371,7 +371,7 @@ export class GitCode1sDataSource extends DataSource {
 	async provideCodeReviewChangedFiles(
 		repoFullName: string,
 		id: string,
-		options?: CommonQueryOptions,
+		_options?: CommonQueryOptions,
 	): Promise<ChangedFile[]> {
 		const fetcher = GitCodeFetcher.getInstance();
 		const { owner, repo } = this.parseRepoFullName(repoFullName);
@@ -391,36 +391,36 @@ export class GitCode1sDataSource extends DataSource {
 		}
 	}
 
-	provideFileBlameRanges(repo: string, ref: string, path: string): Promise<BlameRange[]> {
+	provideFileBlameRanges(_repo: string, _ref: string, _path: string): Promise<BlameRange[]> {
 		return Promise.resolve([]);
 	}
 	provideSymbolDefinitions(
-		repo: string,
-		ref: string,
-		path: string,
-		line: number,
-		character: number,
-		symbol: string,
+		_repo: string,
+		_ref: string,
+		_path: string,
+		_line: number,
+		_character: number,
+		_symbol: string,
 	): Promise<SymbolDefinitions> {
 		return Promise.resolve([]);
 	}
 	provideSymbolReferences(
-		repo: string,
-		ref: string,
-		path: string,
-		line: number,
-		character: number,
-		symbol: string,
+		_repo: string,
+		_ref: string,
+		_path: string,
+		_line: number,
+		_character: number,
+		_symbol: string,
 	): Promise<SymbolReferences> {
 		return Promise.resolve([]);
 	}
 	provideSymbolHover(
-		repo: string,
-		ref: string,
-		path: string,
-		line: number,
-		character: number,
-		symbol: string,
+		_repo: string,
+		_ref: string,
+		_path: string,
+		_line: number,
+		_character: number,
+		_symbol: string,
 	): Promise<SymbolHover | null> {
 		return Promise.resolve(null);
 	}

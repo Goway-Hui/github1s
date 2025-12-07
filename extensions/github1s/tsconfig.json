@@ -9,11 +9,11 @@
     "lib": ["WebWorker", "es2016"],
     "sourceMap": true,
     "baseUrl": "src",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["*"]
     }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

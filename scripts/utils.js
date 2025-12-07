@@ -9,4 +9,7 @@ export const executeCommand = (command, args, cwd) => {
 	if (result.error) {
 		throw result.error;
 	}
+	if (result.status !== 0) {
+		process.exit(result.status);
+	}
 };

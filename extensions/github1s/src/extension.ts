@@ -34,6 +34,33 @@ export async function activate(context: vscode.ExtensionContext) {
 	// Ensure the router has been initialized
 	await router.initialize(browserUrlManager);
 
+	// Check for insecure context which breaks Webviews (required for Authentication)
+	browserUrlManager.href().then((browserUrl) => {
+		if (browserUrl) {
+			try {
+				const url = new URL(browserUrl);
+				if (url.protocol === 'http:' && !['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)) {
+					vscode.window
+						.showWarningMessage(
+							'Webviews (used for Authentication) require a Secure Context (HTTPS). ' +
+								'Please use HTTPS or configure your browser to treat this origin as secure ' +
+								'(chrome://flags/#unsafely-treat-insecure-origin-as-secure).',
+							'Learn More',
+						)
+						.then((selection) => {
+							if (selection === 'Learn More') {
+								vscode.env.openExternal(
+									vscode.Uri.parse('https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts'),
+								);
+							}
+						});
+				}
+			} catch (e) {
+				console.error('Failed to parse browser URL', e);
+			}
+		}
+	});
+
 	// do follow-up works in parallel
 	await Promise.all([
 		registerVSCodeProviders(),

@@ -249,7 +249,7 @@ declare module 'vscode' {
 		 */
 		tunnelFactory?: (
 			tunnelOptions: TunnelOptions,
-			tunnelCreationOptions: TunnelCreationOptions
+			tunnelCreationOptions: TunnelCreationOptions,
 		) => Thenable<Tunnel> | undefined;
 
 		/**
@@ -302,7 +302,7 @@ declare module 'vscode' {
 	export namespace workspace {
 		export function registerRemoteAuthorityResolver(
 			authorityPrefix: string,
-			resolver: RemoteAuthorityResolver
+			resolver: RemoteAuthorityResolver,
 		): Disposable;
 		export function registerResourceLabelFormatter(formatter: ResourceLabelFormatter): Disposable;
 	}
@@ -325,7 +325,7 @@ declare module 'vscode' {
 			editor: TextEditor,
 			line: number,
 			height: number,
-			options?: WebviewOptions
+			options?: WebviewOptions,
 		): WebviewEditorInset;
 	}
 
@@ -560,7 +560,7 @@ declare module 'vscode' {
 			query: TextSearchQuery,
 			options: TextSearchOptions,
 			progress: Progress<TextSearchResult>,
-			token: CancellationToken
+			token: CancellationToken,
 		): ProviderResult<TextSearchComplete>;
 	}
 
@@ -613,7 +613,7 @@ declare module 'vscode' {
 		provideFileSearchResults(
 			query: FileSearchQuery,
 			options: FileSearchOptions,
-			token: CancellationToken
+			token: CancellationToken,
 		): ProviderResult<Uri[]>;
 	}
 
@@ -724,7 +724,7 @@ declare module 'vscode' {
 		export function findTextInFiles(
 			query: TextSearchQuery,
 			callback: (result: TextSearchResult) => void,
-			token?: CancellationToken
+			token?: CancellationToken,
 		): Thenable<TextSearchComplete>;
 
 		/**
@@ -739,7 +739,7 @@ declare module 'vscode' {
 			query: TextSearchQuery,
 			options: FindTextInFilesOptions,
 			callback: (result: TextSearchResult) => void,
-			token?: CancellationToken
+			token?: CancellationToken,
 		): Thenable<TextSearchComplete>;
 	}
 
@@ -775,7 +775,7 @@ declare module 'vscode' {
 		export function registerDiffInformationCommand(
 			command: string,
 			callback: (diff: LineChange[], ...args: any[]) => any,
-			thisArg?: any
+			thisArg?: any,
 		): Disposable;
 	}
 
@@ -845,7 +845,7 @@ declare module 'vscode' {
 		 */
 		validateInput?(
 			value: string,
-			cursorPosition: number
+			cursorPosition: number,
 		): ProviderResult<SourceControlInputBoxValidation | undefined | null>;
 	}
 
@@ -946,7 +946,7 @@ declare module 'vscode' {
 	export interface TreeView<T> extends Disposable {
 		reveal(
 			element: T | undefined,
-			options?: { select?: boolean; focus?: boolean; expand?: boolean | number }
+			options?: { select?: boolean; focus?: boolean; expand?: boolean | number },
 		): Thenable<void>;
 	}
 	//#endregion
@@ -1031,7 +1031,7 @@ declare module 'vscode' {
 		moveCustomTextEditor?(
 			newDocument: TextDocument,
 			existingWebviewPanel: WebviewPanel,
-			token: CancellationToken
+			token: CancellationToken,
 		): Thenable<void>;
 	}
 
@@ -1325,19 +1325,19 @@ declare module 'vscode' {
 			start: number,
 			end: number,
 			cells: NotebookCellData[],
-			metadata?: WorkspaceEditEntryMetadata
+			metadata?: WorkspaceEditEntryMetadata,
 		): void;
 		replaceNotebookCellOutput(
 			uri: Uri,
 			index: number,
 			outputs: (NotebookCellOutput | CellOutput)[],
-			metadata?: WorkspaceEditEntryMetadata
+			metadata?: WorkspaceEditEntryMetadata,
 		): void;
 		replaceNotebookCellMetadata(
 			uri: Uri,
 			index: number,
 			cellMetadata: NotebookCellMetadata,
-			metadata?: WorkspaceEditEntryMetadata
+			metadata?: WorkspaceEditEntryMetadata,
 		): void;
 	}
 
@@ -1634,7 +1634,7 @@ declare module 'vscode' {
 		backupNotebook(
 			document: NotebookDocument,
 			context: NotebookDocumentBackupContext,
-			cancellation: CancellationToken
+			cancellation: CancellationToken,
 		): Promise<NotebookDocumentBackup>;
 	}
 
@@ -1665,7 +1665,7 @@ declare module 'vscode' {
 			kernel: T,
 			document: NotebookDocument,
 			webview: NotebookCommunication,
-			token: CancellationToken
+			token: CancellationToken,
 		): ProviderResult<void>;
 	}
 
@@ -1728,16 +1728,16 @@ declare module 'vscode' {
 					filenamePattern: NotebookFilenamePattern[];
 					exclusive?: boolean;
 				};
-			}
+			},
 		): Disposable;
 
 		export function registerNotebookKernelProvider(
 			selector: NotebookDocumentFilter,
-			provider: NotebookKernelProvider
+			provider: NotebookKernelProvider,
 		): Disposable;
 
 		export function createNotebookEditorDecorationType(
-			options: NotebookDecorationRenderOptions
+			options: NotebookDecorationRenderOptions,
 		): NotebookEditorDecorationType;
 		export function openNotebookDocument(uri: Uri, viewType?: string): Promise<NotebookDocument>;
 		export const onDidOpenNotebookDocument: Event<NotebookDocument>;
@@ -1762,7 +1762,7 @@ declare module 'vscode' {
 		 */
 		export function createConcatTextDocument(
 			notebook: NotebookDocument,
-			selector?: DocumentSelector
+			selector?: DocumentSelector,
 		): NotebookConcatTextDocument;
 
 		export const onDidChangeActiveNotebookKernel: Event<{
@@ -1782,7 +1782,7 @@ declare module 'vscode' {
 		export function createCellStatusBarItem(
 			cell: NotebookCell,
 			alignment?: NotebookCellStatusBarAlignment,
-			priority?: number
+			priority?: number,
 		): NotebookCellStatusBarItem;
 	}
 
@@ -1795,7 +1795,7 @@ declare module 'vscode' {
 		export const onDidChangeNotebookEditorVisibleRanges: Event<NotebookEditorVisibleRangesChangeEvent>;
 		export function showNotebookDocument(
 			document: NotebookDocument,
-			options?: NotebookDocumentShowOptions
+			options?: NotebookDocumentShowOptions,
 		): Promise<NotebookEditor>;
 	}
 
@@ -2009,7 +2009,7 @@ declare module 'vscode' {
 	export namespace languages {
 		export function getTokenInformationAtPosition(
 			document: TextDocument,
-			position: Position
+			position: Position,
 		): Promise<TokenInformation>;
 	}
 

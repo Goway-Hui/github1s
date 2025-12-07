@@ -3,7 +3,8 @@
  * @author netcon
  */
 
-const CLIENT_ID = 'eae6621348403ea49103';
+//const CLIENT_ID = 'eae6621348403ea49103';
+const CLIENT_ID = 'Ov23livez1aIiiHLdseB';
 const GITHUB_ORIGIN = 'https://github.com';
 const GITHUB_AUTH_URL = `${GITHUB_ORIGIN}/login/oauth/authorize?scope=repo,user:email&client_id=${CLIENT_ID}`;
 const OPEN_WINDOW_FEATURES =

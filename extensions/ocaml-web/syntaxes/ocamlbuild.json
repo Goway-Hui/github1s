@@ -67,10 +67,7 @@
           "end": "}",
           "beginCaptures": [{ "name": "keyword.operator.ocamlbuild" }],
           "endCaptures": [{ "name": "keyword.operator.ocamlbuild" }],
-          "patterns": [
-            { "name": "keyword.operator.ocamlbuild", "match": "," },
-            { "include": "#patterns" }
-          ]
+          "patterns": [{ "name": "keyword.operator.ocamlbuild", "match": "," }, { "include": "#patterns" }]
         },
         {
           "begin": "\\[\\^?",

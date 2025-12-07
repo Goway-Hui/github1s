@@ -3,7 +3,7 @@
  * @author netcon
  */
 
-import * as jsonStableStringify from 'json-stable-stringify';
+import jsonStableStringify from 'json-stable-stringify';
 import pFinally from 'p-finally';
 
 const defaultComputeCacheKey = (...args) => jsonStableStringify([...args]);

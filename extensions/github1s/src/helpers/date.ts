@@ -3,8 +3,8 @@
  * @author netcon
  */
 
-import * as dayjs from 'dayjs';
-import * as relativeTimePlugin from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+import relativeTimePlugin from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTimePlugin);
 

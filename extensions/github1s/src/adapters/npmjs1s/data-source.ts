@@ -5,7 +5,7 @@
 
 import { CommonQueryOptions, DataSource, Directory, DirectoryEntry, File, FileType, Tag } from '../types';
 import { matchSorter } from 'match-sorter';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 type PackageFile = {
 	path: string;

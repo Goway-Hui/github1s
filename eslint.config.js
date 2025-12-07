@@ -12,6 +12,7 @@ export default [
 			'@typescript-eslint/no-explicit-any': 'off',
 			'@typescript-eslint/no-unused-expressions': 'off',
 			'@typescript-eslint/no-unused-vars': 'off',
+			'jsdoc/check-tag-names': ['warn', { definedTags: ['date', 'Time', 'ProjectName', 'Author', 'Description'] }],
 		},
 	},
 ];

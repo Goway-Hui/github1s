@@ -52,8 +52,8 @@ export class GitCodeTokenManager {
 		if (!accessToken) {
 			return Promise.resolve(null);
 		}
-		const fetchOptions = accessToken ? { headers: { Authorization: `Bearer ${accessToken}` } } : {};
-		return fetch(`${GITCODE_API_PREFIX}/user`, fetchOptions)
+		// GitCode API requires access_token in query parameter
+		return fetch(`${GITCODE_API_PREFIX}/user?access_token=${encodeURIComponent(accessToken)}`)
 			.then((response) => {
 				if (response.status === 401) {
 					return null;

@@ -47,11 +47,14 @@ export class GitCodeFetcher {
 
 			const accessToken = GitCodeTokenManager.getInstance().getToken();
 
+			if (accessToken) {
+				path += (path.includes('?') ? '&' : '?') + `access_token=${encodeURIComponent(accessToken)}`;
+			}
+
 			return fetch(GITCODE_API_PREFIX + path, {
 				method,
 				headers: {
 					Accept: params.format === 'text' ? 'text/plain' : 'application/json',
-					...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
 				},
 			}).then(async (response: Response & { data: any }) => {
 				if (params.format === 'text') {

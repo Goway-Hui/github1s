@@ -388,10 +388,7 @@
           "comment": "ordered set language",
           "begin": "\\(",
           "end": "\\)",
-          "patterns": [
-            { "name": "keyword.operator.dune", "match": "/" },
-            { "include": "#general" }
-          ]
+          "patterns": [{ "name": "keyword.operator.dune", "match": "/" }, { "include": "#general" }]
         }
       ]
     },
