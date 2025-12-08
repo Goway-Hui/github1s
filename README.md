@@ -2,197 +2,147 @@
 
 # github1s
 
-One second to read GitHub code with VS Code.
+一秒钟用 VS Code 打开 GitHub 代码。
 
-## Usage
+## 项目简介
 
-Just add `1s` after `github` and press `Enter` in the browser address bar for any repository you want to read.
+GitHub1s 允许你直接在浏览器中使用 VS Code 的界面阅读 GitHub 仓库的代码。
+本项目已经过现代化改造，支持 Vite 构建、Cloudflare Pages 部署，并采用 Manifest V3 标准的浏览器扩展进行访问。
 
-For example, try it on the VS Code repo:
+## 目录结构
 
-[https://github1s.com/microsoft/vscode](https://github1s.com/microsoft/vscode)
-
-![VS Code - GitHub1s](https://raw.githubusercontent.com/conwnet/github1s/master/resources/images/vs-code-github1s.png)
-
-You can also use [https://gitlab1s.com](https://gitlab1s.com) or [https://npmjs1s.com](https://npmjs1s.com) in the same way.
-
-For browser extensions, see [Third-party Related Projects](https://github.com/conwnet/github1s#third-party-related-projects).
-
-Or save the following code snippet as a bookmarklet, you can use it to quickly switch between github.com and github1s.com (GitHub markdown doesn't allow js links, so just copy it into a bookmark).
+以下是项目根目录的文件结构说明：
 
 ```
-javascript: window.location.href = window.location.href.replace(/github(1s)?.com/, function(match, p1) { return p1 ? 'github.com' : 'github1s.com' })
+github1s/
+├── .devcontainer/       # VS Code Dev Container 配置，支持云端开发环境
+├── .github/             # GitHub Actions 工作流与配置
+├── .husky/              # Git hooks (Husky) 配置
+├── browser-extension/   # 浏览器扩展源码 (Manifest V3)，包含 background.js 和 content.js
+├── certs/               # 本地开发用的 SSL 证书 (由 generate-ssl.sh 生成)
+├── docs/                # 项目文档
+├── extensions/          # 内置 VS Code 扩展 (核心逻辑)
+│   └── github1s/        # github1s 核心扩展源码，处理文件系统和 API 交互
+├── functions/           # Cloudflare Pages Functions (API 接口，如 OAuth 回调)
+├── nginx/               # Nginx 配置 (用于本地反向代理模拟生产环境)
+├── public/              # 静态公共资源 (favicon, robots.txt, manifest.json 等)
+├── resources/           # 项目图片与静态资源 (Logo, 演示图等)
+├── scripts/             # 构建与工具脚本
+├── src/                 # Web 应用入口源码 (Vite 应用入口)
+├── tests/               # 自动化测试 (Jest)
+├── vscode-web/          # VS Code Web 依赖资源构建脚本
+├── .dockerignore        # Docker 构建忽略规则
+├── .editorconfig        # 编辑器代码风格配置
+├── .gitignore           # Git 忽略规则
+├── .gitpod.Dockerfile   # Gitpod 环境 Dockerfile
+├── .gitpod.yml          # Gitpod 配置
+├── .prettierignore      # Prettier 忽略规则
+├── .prettierrc.js       # Prettier 配置
+├── Dockerfile           # 应用构建 Dockerfile
+├── LICENSE              # 项目许可证 (MIT)
+├── README.md            # 项目说明文档
+├── browser-extension.crx # 浏览器扩展打包文件 (Artifact)
+├── browser-extension.pem # 浏览器扩展打包密钥 (Artifact)
+├── deploy.ps1           # 部署辅助脚本 (PowerShell)
+├── docker-compose.yml   # Docker Compose 配置
+├── eslint.config.js     # ESLint 代码检查配置
+├── generate-ssl.sh      # 本地 SSL 证书生成脚本
+├── package-lock.json    # NPM 依赖锁定文件
+├── package.json         # NPM 项目配置与脚本 (包含 dev:vite, build:vite 等命令)
+├── server.js            # 本地简易预览服务脚本
+├── tsconfig.json        # TypeScript 全局配置
+└── vite.config.ts       # Vite 构建配置 (定义端口 4000 和输出目录 dist)
 ```
 
-### Develop in the cloud
+## 使用方法
 
-To edit files, run Docker containers, create pull requests and more, click the "Develop your project on [Gitpod](https://www.gitpod.io)" button in the status bar. You can also open the Command Palette (default shortcut `Ctrl+Shift+P`) and choose `GitHub1s: Edit files in Gitpod`.
+由于本项目部署在私有环境 (Cloudflare Pages)，原有的 URL 修改方式 (如 `github1s.com`) 不再适用。请使用配套的浏览器插件访问。
 
-![Gitpod Status Bar](https://raw.githubusercontent.com/conwnet/github1s/master/resources/images/gitpod-statusbar.png)
+### 1. 安装浏览器插件
 
-## Documentation
+1.  克隆或下载本项目到本地。
+2.  打开 Chrome/Edge 浏览器的扩展程序管理页面 (`chrome://extensions` 或 `edge://extensions`)。
+3.  开启右上角的 **“开发者模式”**。
+4.  点击 **“加载已解压的扩展程序”**，选择项目根目录下的 `browser-extension` 文件夹。
 
-- [How it works](https://github.com/conwnet/github1s/blob/master/docs/guide.md)
-- [Roadmap](https://github.com/conwnet/github1s/projects/1)
+### 2. 配置插件域名
 
-## Enabling Private Repositories
+在使用前，你需要将插件指向你的 Cloudflare Pages 部署域名：
 
-If you want to view non-public repositories, you need to add an OAuth token. The token is stored only in your browser, and only send to GitHub when fetching your repository's files. Click on the icon near the bottom of the left-hand row of icons, and the dialog box will prompt you for it, and even take you to your GitHub settings page to generate one, if needed.
+1.  打开 `browser-extension/background.js` 和 `browser-extension/content.js` 文件。
+2.  找到 `GITHUB1S_DOMAIN` 常量。
+3.  将其修改为你实际的部署域名，例如：
+    ```javascript
+    const GITHUB1S_DOMAIN = 'https://your-project.pages.dev';
+    ```
+4.  回到扩展程序管理页面，点击 **刷新** 图标使更改生效。
+
+### 3. 开始使用
+
+在任意 GitHub 仓库页面点击浏览器工具栏中的 **GitCode1s** 图标，即可跳转到你的 VS Code 网页版实例。
+
+## 部署指南 (Cloudflare Pages)
+
+推荐使用 Cloudflare Pages 进行无服务器部署。
+
+1.  **Fork 本仓库** 到你的 GitHub 账号。
+2.  登录 **Cloudflare Dashboard**，进入 **Pages** 页面。
+3.  点击 **Create a project** > **Connect to Git**。
+4.  选择你 Fork 的仓库。
+5.  配置构建参数：
+    - **Framework preset**: None (或手动配置)
+    - **Build command**: `npm run build:vite`
+    - **Build output directory**: `dist`
+6.  **环境变量 (Environment Variables)** (可选，用于私有仓库支持):
+    - `GITHUB_OAUTH_CLIENT_ID`: 你的 GitHub OAuth Client ID。
+7.  点击 **Save and Deploy**。
+
+> **注意**：部署完成后，请务必按照“使用方法”更新浏览器插件中的域名。
+
+## 开发指南
+
+### 环境准备
+
+- Node.js (推荐 v16+)
+- NPM
+
+### 本地开发
+
+1.  安装依赖：
+
+    ```bash
+    npm install
+    ```
+
+2.  启动开发服务器 (Vite)：
+
+    ```bash
+    npm run dev:vite
+    ```
+
+    服务将启动在 `http://localhost:4000`。
+
+3.  构建生产版本：
+    ```bash
+    npm run build:vite
+    ```
+    构建产物将生成在 `dist` 目录。
+
+### 重新部署步骤
+
+如果你修改了代码，请执行以下步骤更新线上版本：
+
+1.  提交并推送更改到 GitHub：
+    ```bash
+    git add .
+    git commit -m "feat: update configuration"
+    git push
+    ```
+2.  Cloudflare Pages 会自动检测 Commit 并触发重新构建与部署。
+
+## 启用私有仓库访问
+
+如果你想查看非公开仓库，需要配置 GitHub OAuth Token。
+点击编辑器左侧底部的配置图标，按照提示输入 Token。Token 仅存储在你的浏览器本地，用于直接向 GitHub API 发起请求。
 
 <img height="500px" src="https://raw.githubusercontent.com/conwnet/github1s/master/resources/images/auth-token.png" />
-
-## Screenshots
-
-![VS Code - GitHub1s](https://raw.githubusercontent.com/conwnet/github1s/master/resources/images/GitHub1sDemo1.gif)
-
-![VS Code - GitHub1s](https://raw.githubusercontent.com/conwnet/github1s/master/resources/images/demo.png)
-
-## Development
-
-### Cloud-based development
-
-You can start an online development environment with [Gitpod](https://www.gitpod.io) by clicking the following button:
-
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/conwnet/github1s)
-
-### Local development
-
-```bash
-git clone git@github.com:conwnet/github1s.git
-cd github1s
-npm install
-npm run watch
-# The cli will automatically open http://localhost:8080 once the build is completed.
-# You can visit http://localhost:8080/conwnet/github1s if it doesn't.
-```
-
-#### Local development with full VS Code build
-
-You need [these prerequisites (the same ones as for VS Code)](https://github.com/microsoft/vscode/wiki/How-to-Contribute#prerequisites) for development with full VS Code build.
-Please make sure you could build VS Code locally before the watch mode.
-
-To verify the build:
-
-```bash
-cd github1s
-npm run build:vscode
-```
-
-After the initial successful build, you could use the watch mode:
-
-```bash
-cd github1s
-npm install
-npm run watch-with-vscode
-# The cli will automatically open http://localhost:8080 once the build is completed.
-# You can visit http://localhost:8080/conwnet/github1s if it doesn't.
-```
-
-### ... or ... VS Code + Docker Development
-
-You can use the VS Code plugin [Remote-Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) `Dev Container` to use a Docker container as a development environment.
-
-1. Install the Remote-Containers plugin in VS Code & Docker
-2. Open the Command Palette (default shortcut `Ctrl+Shift+P`) and choose `Remote-Containers: Clone Repository in Container Volume...`
-3. Enter the repo, in this case `https://github.com/conwnet/github1s.git` or your forked repo
-4. Pick either, `Create a unique volume` or `Create a new volume`
-
-   - Now VS Code will create the docker container and connect to the new container so you can use this as a fully setup environment!
-
-5. Open a new VS Code Terminal, then you can run the `npm install` commands listed above.
-
-```bash
-npm install
-npm run watch
-# The cli will automatically open http://localhost:8080 once the build is completed.
-# You can visit http://localhost:8080/conwnet/github1s if it doesn't.
-```
-
-### Format all codes
-
-```bash
-npm run format
-```
-
-It uses `prettier` to format all possible codes.
-
-## Build
-
-```bash
-npm install
-npm run build
-```
-
-## Feedback
-
-- If something is not working, [create an issue](https://github.com/conwnet/github1s/issues/new)
-
-## Sponsors
-
-The continued development and maintenance of GitHub1s is made possible by these generous sponsors:
-
-<table><tbody><tr>
-<td><a href="https://sourcegraph.com/">
-<img height="40px" src="https://raw.githubusercontent.com/conwnet/github1s/master/resources/images/sourcegraph-logo.svg">
-</a></td>
-</tr></tbody></table>
-
-## Partners
-
-We are partnered with [OSS Insight](https://ossinsight.io/?utm_source=github1s&utm_medium=github&utm_campaign=ghtrending) to get the Trending Repositories & some more Interesting Analytics. [OSS Insight](https://ossinsight.io/?utm_source=github1s&utm_medium=github&utm_campaign=ghtrending) provides deep insights into GitHub repos, developers, and curated repo lists from billions of GitHub events. It’s built with [TiDB Cloud](https://www.pingcap.com/tidb-cloud/?utm_source=github1s&utm_medium=github&utm_campaign=ghtrending).
-
-<table><tbody><tr>
-<td><a href="https://ossinsight.io/?utm_source=github1s&utm_medium=github&utm_campaign=ghtrending">
-<img height="40px" src="./resources/images/ossinsight-brand-dark.png">
-</a></td>
-</tr></tbody></table>
-
-## Maintainers! :blush:
-
-<table>
-  <tbody><tr>
-    <td align="center"><a href="https://github.com/conwnet"><img alt="" src="https://avatars.githubusercontent.com/conwnet" width="100px;"><br><sub><b>netcon</b></sub></a><br><a href="https://github.com/conwnet/github1s/commits?author=conwnet" title="Code">💻 🖋</a></td> </a></td>
-    <td align="center"><a href="https://github.com/xcv58"><img alt="" src="https://avatars.githubusercontent.com/xcv58" width="100px;"><br><sub><b>xcv58</b></sub></a><br><a href="https://github.com/conwnet/github1s/commits?author=xcv58" title="Code">💻 🖋</a></td></a></td>
-    <td align="center"><a href="https://github.com/Siddhant-K-code"><img alt="" src="https://avatars.githubusercontent.com/Siddhant-K-code" width="100px;"><br><sub><b>Siddhant Khare</b></sub></a><br><a href="https://github.com/conwnet/github1s/commits?author=Siddhant-K-code" title="Code">💻 🖋</a></td> </a></td>
-  </tr>
-</tbody></table>
-
-## Stargazers over time
-
-[![Stargazers over time](https://api.star-history.com/svg?repos=conwnet/github1s&type=Date)](https://star-history.com/#conwnet/github1s&Date)
-
-<details>
-<summary>Third-party Related Projects</summary>
-<br>
-
-### Chrome Extensions
-
-- [Repositree](https://chrome.google.com/webstore/detail/repositree/lafjldoccjnjlcmdhmniholdpjkbgajo) ([chouglesaud/repositree](https://github.com/chouglesaud/repositree))
-- [github-code-viewer](https://chrome.google.com/webstore/detail/github-code-viewer/ecddapgifccgblebfibdgkagfbdagjfn) ([febaoshan/edge-extensions-github-code-viewer](https://github.com/febaoshan/edge-extensions-github-code-viewer))
-- Github1s Extension ([Darkempire78/GitHub1s-Extension](https://github.com/Darkempire78/GitHub1s-Extension))
-- [Github Web IDE](https://chrome.google.com/webstore/detail/adjiklnjodbiaioggfpbpkhbfcnhgkfe) ([zvizvi/Github-Web-IDE](https://github.com/zvizvi/Github-Web-IDE))
-- [shortcut to github1s](https://chrome.google.com/webstore/detail/shortcut-to-github1s/gfcdbodapcbfckbfpmgeldfkkgjknceo) ([katsuhisa91/github1s-shortcut](https://github.com/katsuhisa91/github1s-shortcut))
-- [Github1s Shortut - Open source](https://github.com/Fauzdar1/Github1s)
-- [⚡️ 1s to GitHub1s!](https://github.com/holazz/webext-github1s)
-- [github1s Google Chrome Extensions](https://github.com/Lonely-Mr-zhang/github_1s_vscode)
-
-### Firefox Extensions
-
-- [Repositree](https://addons.mozilla.org/en-US/firefox/addon/repositree/) ([chouglesaud/repositree](https://github.com/chouglesaud/repositree))
-- [Github1s Extension](https://addons.mozilla.org/firefox/addon/github1s-extension) ([Darkempire78/GitHub1s-Extension](https://github.com/Darkempire78/GitHub1s-Extension))
-- [Github1s](https://addons.mozilla.org/firefox/addon/github1s/) ([mcherifi/github1s-firefox-addon](https://github.com/mcherifi/github1s-firefox-addon))
-- [Github Web IDE](https://addons.mozilla.org/firefox/addon/github-web-ide/) ([zvizvi/Github-Web-IDE](https://github.com/zvizvi/Github-Web-IDE))
-
-### Microsoft Edge Extensions
-
-- [github-code-viewer](https://microsoftedge.microsoft.com/addons/detail/githubcodeviewer/jaaaapanahkknbgdbglnlchbjfhhjlpi) ([febaoshan/edge-extensions-github-code-viewer](https://github.com/febaoshan/edge-extensions-github-code-viewer))
-- [Github Web IDE](https://microsoftedge.microsoft.com/addons/detail/akjbkjciknacicbnkfjbnlaeednpadcf) ([zvizvi/Github-Web-IDE](https://github.com/zvizvi/Github-Web-IDE))
-
-### Safari Extension
-
-- [GitHub1s-For-Safari-Extension](https://apps.apple.com/us/app/readcodeonline/id1569026520?mt=12) ([code4you2021/GitHub1s-For-Safari-Extension](https://github.com/code4you2021/GitHub1s-For-Safari-Extension))
-
-### Tampermonkey scripts
-
-- [Mr-B0b/TamperMonkeyScripts/vscode.js](https://github.com/Mr-B0b/TamperMonkeyScripts/blob/main/vscode.js)
-</details>
